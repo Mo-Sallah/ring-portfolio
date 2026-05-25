@@ -534,7 +534,19 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
   .footer-socials { justify-content: center; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  /* Kill backdrop-filter on mobile — biggest GPU drain */
+  nav, .lang-toggle, .badge, .marquee-section {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  /* Promote scrollable sections to own GPU layer */
+  section { will-change: transform; transform: translateZ(0); }
+  /* Disable glow orbs (blurred fixed elements are expensive) */
+  .glow-orb { display: none; }
+  /* Disable hero canvas background (Three.js off on mobile) */
+  #hero-canvas { display: none; }
+}
   .process-steps { grid-template-columns: 1fr; }
   .about-stats { position: static; width: 100%; margin-top: 16px; display: grid; grid-template-columns: repeat(4, 1fr); }
 }
@@ -961,6 +973,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
 </footer>
 
 <script>
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
 // ===== LANGUAGE SYSTEM =====
 let currentLang = 'en';
 
@@ -969,165 +983,176 @@ function setLang(lang) {
   const html = document.documentElement;
   html.lang = lang;
   html.dir = lang === 'ar' ? 'rtl' : 'ltr';
-
   document.getElementById('btnEN').classList.toggle('active', lang === 'en');
   document.getElementById('btnAR').classList.toggle('active', lang === 'ar');
-
-  // Simple text nodes
   document.querySelectorAll('[data-en]').forEach(el => {
     el.textContent = el.getAttribute('data-' + lang) || el.getAttribute('data-en');
   });
-
-  // HTML content (rich)
   document.querySelectorAll('[data-en-html]').forEach(el => {
     const key = 'data-' + lang + '-html';
     el.innerHTML = el.getAttribute(key) || el.getAttribute('data-en-html');
   });
-
-  // Placeholders
   document.querySelectorAll('[data-placeholder-en]').forEach(el => {
     el.placeholder = el.getAttribute('data-placeholder-' + lang) || el.getAttribute('data-placeholder-en');
   });
-
-  // Logo text special case
-  const logoTexts = document.querySelectorAll('.logo-text');
-  logoTexts.forEach(lt => {
-    if (lang === 'ar') {
-      lt.innerHTML = 'رِنج<span>.</span>';
-    } else {
-      lt.innerHTML = 'RING<span>.</span>';
-    }
+  document.querySelectorAll('.logo-text').forEach(lt => {
+    lt.innerHTML = lang === 'ar' ? 'رِنج<span>.</span>' : 'RING<span>.</span>';
   });
 }
 
-// ===== CURSOR =====
-const cursor = document.getElementById('cursor');
-const cursorRing = document.getElementById('cursorRing');
-
-document.addEventListener('mousemove', (e) => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-  setTimeout(() => {
-    cursorRing.style.left = e.clientX + 'px';
-    cursorRing.style.top = e.clientY + 'px';
-  }, 60);
-});
-
-document.querySelectorAll('a, button, .service-card').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.style.width = '6px'; cursor.style.height = '6px'; cursorRing.style.width = '52px'; cursorRing.style.height = '52px'; });
-  el.addEventListener('mouseleave', () => { cursor.style.width = '10px'; cursor.style.height = '10px'; cursorRing.style.width = '36px'; cursorRing.style.height = '36px'; });
-});
+// ===== CURSOR (desktop only) =====
+if (!isMobile) {
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let cx = 0, cy = 0;
+  document.addEventListener('mousemove', (e) => {
+    cx = e.clientX; cy = e.clientY;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    cursorRing.style.left = cx + 'px';
+    cursorRing.style.top = cy + 'px';
+  });
+  document.querySelectorAll('a, button, .service-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='6px'; cursor.style.height='6px'; cursorRing.style.width='52px'; cursorRing.style.height='52px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; cursorRing.style.width='36px'; cursorRing.style.height='36px'; });
+  });
+}
 
 // ===== THREE.JS HERO =====
-const canvas = document.getElementById('hero-canvas');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
+const heroCanvas = document.getElementById('hero-canvas');
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, 8);
-
-const gold = new THREE.Color(0xc9a84c);
-const goldDim = new THREE.Color(0x7a6230);
-const goldFaint = new THREE.Color(0x3a2e16);
-
-function createRing(radius, tube, segments, color, opacity) {
-  const geo = new THREE.TorusGeometry(radius, tube, 16, segments);
-  const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity });
-  return new THREE.Mesh(geo, mat);
-}
-
-const rings = [];
-[{ r:3.8,t:.008,s:200,c:gold,o:.7 },{ r:3.0,t:.005,s:180,c:gold,o:.4 },{ r:2.2,t:.004,s:160,c:goldDim,o:.35 },{ r:1.5,t:.003,s:120,c:goldDim,o:.25 },{ r:.8,t:.003,s:80,c:goldFaint,o:.4 }].forEach((d,i) => {
-  const ring = createRing(d.r, d.t, d.s, d.c, d.o);
-  ring.rotation.x = i * 0.3 - 0.6;
-  ring.rotation.y = i * 0.15;
-  scene.add(ring);
-  rings.push(ring);
-});
-
-const dotGeo = new THREE.SphereGeometry(0.05, 16, 16);
-scene.add(new THREE.Mesh(dotGeo, new THREE.MeshBasicMaterial({ color: gold })));
-
-const particleCount = 300;
-const pGeo = new THREE.BufferGeometry();
-const pos = new Float32Array(particleCount * 3);
-for (let i = 0; i < particleCount; i++) {
-  const theta = Math.random() * Math.PI * 2;
-  const r = 4 + Math.random() * 4;
-  pos[i*3] = Math.cos(theta)*r + (Math.random()-.5)*2;
-  pos[i*3+1] = (Math.random()-.5)*8;
-  pos[i*3+2] = Math.sin(theta)*r + (Math.random()-.5)*2;
-}
-pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: gold, size: 0.03, transparent: true, opacity: 0.5 }));
-scene.add(particles);
-
-let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
-document.addEventListener('mousemove', e => {
-  targetRX = (e.clientY / window.innerHeight - .5) * .4;
-  targetRY = (e.clientX / window.innerWidth - .5) * .6;
-});
-
-const clock = new THREE.Clock();
-(function animateHero() {
-  requestAnimationFrame(animateHero);
-  const t = clock.getElapsedTime();
-  currentRX += (targetRX - currentRX) * .03;
-  currentRY += (targetRY - currentRY) * .03;
-  rings.forEach((ring, i) => {
-    ring.rotation.x = currentRX + Math.sin(t*.2+i)*.05 + (i*.28-.6);
-    ring.rotation.y = currentRY + t*(.05+i*.015) + (i*.15);
-    ring.rotation.z = Math.cos(t*.1+i*.5)*.02;
-  });
-  particles.rotation.y = t * .01;
-  particles.rotation.x = Math.sin(t*.05)*.05;
-  renderer.render(scene, camera);
-})();
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+if (isMobile) {
+  // On mobile: skip Three.js entirely, show a simple CSS gradient instead
+  heroCanvas.style.display = 'none';
+} else {
+  const renderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // cap at 1.5x not 2x
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 8);
+
+  const gold = new THREE.Color(0xc9a84c);
+  const goldDim = new THREE.Color(0x7a6230);
+  const goldFaint = new THREE.Color(0x3a2e16);
+
+  function createRing(radius, tube, segments, color, opacity) {
+    const geo = new THREE.TorusGeometry(radius, tube, 12, segments); // reduced from 16
+    const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity });
+    return new THREE.Mesh(geo, mat);
+  }
+
+  const rings = [];
+  // Reduced segment counts for desktop too
+  [{ r:3.8,t:.008,s:120,c:gold,o:.7 },{ r:3.0,t:.005,s:100,c:gold,o:.4 },{ r:2.2,t:.004,s:90,c:goldDim,o:.35 },{ r:1.5,t:.003,s:70,c:goldDim,o:.25 },{ r:.8,t:.003,s:50,c:goldFaint,o:.4 }].forEach((d,i) => {
+    const ring = createRing(d.r, d.t, d.s, d.c, d.o);
+    ring.rotation.x = i * 0.3 - 0.6;
+    ring.rotation.y = i * 0.15;
+    scene.add(ring);
+    rings.push(ring);
+  });
+
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({ color: gold })));
+
+  const particleCount = 150; // reduced from 300
+  const pGeo = new THREE.BufferGeometry();
+  const pos = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const r = 4 + Math.random() * 4;
+    pos[i*3] = Math.cos(theta)*r + (Math.random()-.5)*2;
+    pos[i*3+1] = (Math.random()-.5)*8;
+    pos[i*3+2] = Math.sin(theta)*r + (Math.random()-.5)*2;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: gold, size: 0.03, transparent: true, opacity: 0.5 }));
+  scene.add(particles);
+
+  let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
+  document.addEventListener('mousemove', e => {
+    targetRX = (e.clientY / window.innerHeight - .5) * .4;
+    targetRY = (e.clientX / window.innerWidth - .5) * .6;
+  });
+
+  // Pause rendering when tab is hidden
+  let animPaused = false;
+  document.addEventListener('visibilitychange', () => { animPaused = document.hidden; });
+
+  const clock = new THREE.Clock();
+  (function animateHero() {
+    requestAnimationFrame(animateHero);
+    if (animPaused) return;
+    const t = clock.getElapsedTime();
+    currentRX += (targetRX - currentRX) * .03;
+    currentRY += (targetRY - currentRY) * .03;
+    rings.forEach((ring, i) => {
+      ring.rotation.x = currentRX + Math.sin(t*.2+i)*.05 + (i*.28-.6);
+      ring.rotation.y = currentRY + t*(.05+i*.015) + (i*.15);
+      ring.rotation.z = Math.cos(t*.1+i*.5)*.02;
+    });
+    particles.rotation.y = t * .01;
+    particles.rotation.x = Math.sin(t*.05)*.05;
+    renderer.render(scene, camera);
+  })();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
 
 // ===== ABOUT CANVAS =====
 const rc = document.getElementById('ringCanvas');
-const ctx = rc.getContext('2d');
-rc.width = 500; rc.height = 500;
-let fc = 0;
-(function drawAboutRings() {
-  requestAnimationFrame(drawAboutRings);
-  fc++;
-  ctx.clearRect(0, 0, 500, 500);
-  const cx = 250, cy = 250, time = fc * .005;
-  [110,85,60,35,12].forEach((r, i) => {
-    const pulse = Math.sin(time*1.5+i*.8)*4;
-    ctx.beginPath(); ctx.arc(cx, cy, r+pulse, 0, Math.PI*2);
-    ctx.strokeStyle = `rgba(201,168,76,${.5-i*.08})`; ctx.lineWidth = i===0?1.5:.8; ctx.stroke();
-  });
-  ctx.beginPath(); ctx.arc(cx,cy,130,time,time+Math.PI*1.2); ctx.strokeStyle='rgba(201,168,76,.3)'; ctx.lineWidth=1; ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx,cy,130,time+Math.PI,time+Math.PI*1.8); ctx.strokeStyle='rgba(201,168,76,.15)'; ctx.lineWidth=.5; ctx.stroke();
-  const ox=cx+Math.cos(time*1.2)*110, oy=cy+Math.sin(time*1.2)*110;
-  ctx.beginPath(); ctx.arc(ox,oy,4,0,Math.PI*2); ctx.fillStyle='rgba(201,168,76,.9)'; ctx.fill();
-  [0,Math.PI/4,Math.PI/2,3*Math.PI/4].forEach(angle => {
-    ctx.beginPath(); ctx.moveTo(cx+Math.cos(angle+time*.1)*15,cy+Math.sin(angle+time*.1)*15); ctx.lineTo(cx+Math.cos(angle+time*.1)*155,cy+Math.sin(angle+time*.1)*155); ctx.strokeStyle='rgba(201,168,76,.06)'; ctx.lineWidth=1; ctx.stroke();
-  });
-  ctx.save(); ctx.font='700 14px Syne,sans-serif'; ctx.fillStyle='rgba(201,168,76,.35)'; ctx.textAlign='center'; ctx.fillText('RING',cx,cy+5); ctx.restore();
-})();
+if (rc) {
+  const ctx = rc.getContext('2d');
+  rc.width = 500; rc.height = 500;
+  let fc = 0;
+  let aboutPaused = false;
+
+  // Only animate when visible (saves battery on mobile)
+  const aboutObserver = new IntersectionObserver(entries => {
+    aboutPaused = !entries[0].isIntersecting;
+  }, { threshold: 0.1 });
+  aboutObserver.observe(rc);
+
+  // On mobile, slow down to ~30fps
+  let lastAboutFrame = 0;
+  const aboutFPS = isMobile ? 30 : 60;
+  const aboutInterval = 1000 / aboutFPS;
+
+  (function drawAboutRings(timestamp) {
+    requestAnimationFrame(drawAboutRings);
+    if (aboutPaused) return;
+    if (timestamp - lastAboutFrame < aboutInterval) return;
+    lastAboutFrame = timestamp;
+    fc++;
+    ctx.clearRect(0, 0, 500, 500);
+    const cx = 250, cy = 250, time = fc * .005;
+    [110,85,60,35,12].forEach((r, i) => {
+      const pulse = Math.sin(time*1.5+i*.8)*4;
+      ctx.beginPath(); ctx.arc(cx, cy, r+pulse, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(201,168,76,${.5-i*.08})`; ctx.lineWidth = i===0?1.5:.8; ctx.stroke();
+    });
+    ctx.beginPath(); ctx.arc(cx,cy,130,time,time+Math.PI*1.2); ctx.strokeStyle='rgba(201,168,76,.3)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,130,time+Math.PI,time+Math.PI*1.8); ctx.strokeStyle='rgba(201,168,76,.15)'; ctx.lineWidth=.5; ctx.stroke();
+    const ox=cx+Math.cos(time*1.2)*110, oy=cy+Math.sin(time*1.2)*110;
+    ctx.beginPath(); ctx.arc(ox,oy,4,0,Math.PI*2); ctx.fillStyle='rgba(201,168,76,.9)'; ctx.fill();
+    if (!isMobile) { // skip decorative lines on mobile
+      [0,Math.PI/4,Math.PI/2,3*Math.PI/4].forEach(angle => {
+        ctx.beginPath(); ctx.moveTo(cx+Math.cos(angle+time*.1)*15,cy+Math.sin(angle+time*.1)*15); ctx.lineTo(cx+Math.cos(angle+time*.1)*155,cy+Math.sin(angle+time*.1)*155); ctx.strokeStyle='rgba(201,168,76,.06)'; ctx.lineWidth=1; ctx.stroke();
+      });
+    }
+    ctx.save(); ctx.font='700 14px Syne,sans-serif'; ctx.fillStyle='rgba(201,168,76,.35)'; ctx.textAlign='center'; ctx.fillText('RING',cx,cy+5); ctx.restore();
+  })(0);
+}
 
 // ===== SCROLL REVEAL =====
-const revealEls = document.querySelectorAll('.reveal');
-new IntersectionObserver(entries => {
+const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }).observe
-? (() => {
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
-  revealEls.forEach(el => io.observe(el));
-})() : null;
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 document.querySelectorAll('.services-grid .service-card, .work-grid .work-card, .process-steps .process-step').forEach((el, i) => {
   el.style.transitionDelay = `${i * 0.08}s`;
