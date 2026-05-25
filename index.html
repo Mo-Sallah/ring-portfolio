@@ -535,7 +535,10 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
 
   /* Services grid → single column */
   .services-grid { grid-template-columns: 1fr; gap: 1px; }
-  .service-card { padding: 36px 28px; }
+  .service-card { padding: 36px 28px 80px 28px; } /* extra bottom room for arrow */
+  html[lang="ar"] .service-card { padding: 36px 28px 80px 28px; }
+  .service-arrow { bottom: 24px; right: 24px; }
+  html[lang="ar"] .service-arrow { right: auto; left: 24px; }
 
   /* About — hide canvas, show inline stats row instead */
   .about-layout { grid-template-columns: 1fr; gap: 0; }
