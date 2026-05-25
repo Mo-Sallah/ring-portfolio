@@ -494,19 +494,23 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
   .cursor, .cursor-ring { display: none; }
   body { cursor: auto; }
 
-  /* Nav */
+  /* Nav — single row, no wrap */
   nav {
-    padding: 16px 20px;
-    flex-wrap: wrap;
-    gap: 12px;
+    padding: 14px 20px;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: center;
   }
   .nav-links { display: none; }
-  .nav-cta { font-size: 11px; padding: 8px 16px; }
-  .lang-toggle { margin-left: auto; }
-  html[lang="ar"] .lang-toggle { margin-left: 0; margin-right: auto; }
+  .nav-cta { font-size: 11px; padding: 8px 14px; white-space: nowrap; flex-shrink: 0; }
+  .lang-toggle { flex-shrink: 0; margin-left: 0; }
+  html[lang="ar"] .lang-toggle { margin-right: 0; }
+  /* push CTA + toggle to right */
+  .nav-logo { margin-right: auto; }
+  html[lang="ar"] .nav-logo { margin-right: 0; margin-left: auto; }
 
   /* Hero */
-  #hero { padding: 0 20px; padding-top: 110px; min-height: 100svh; }
+  #hero { padding: 0 20px; padding-top: 100px; min-height: 100svh; }
   .hero-tag { font-size: 10px; margin-bottom: 20px; }
   .hero-title { font-size: clamp(38px, 11vw, 60px); margin-bottom: 24px; }
   html[lang="ar"] .hero-title { font-size: clamp(32px, 10vw, 52px); }
@@ -526,12 +530,20 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
   .services-grid { grid-template-columns: 1fr; gap: 1px; }
   .service-card { padding: 36px 28px; }
 
-  /* About */
-  .about-layout { grid-template-columns: 1fr; gap: 48px; }
-  .about-visual { height: 300px; }
-  .about-stats { right: 0; width: 180px; }
-  html[lang="ar"] .about-stats { left: 0; }
+  /* About — hide canvas, show inline stats row instead */
+  .about-layout { grid-template-columns: 1fr; gap: 0; }
+  .about-visual { display: none; }
+  .about-text { order: 1; }
+  .about-stats-mobile {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(201,168,76,0.1);
+    margin-bottom: 40px;
+    order: 0;
+  }
   .about-markets { justify-content: flex-start; }
+  .about-values { gap: 20px; }
 
   /* Work grid → single column */
   .work-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -747,6 +759,25 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
           <div class="stat-number">3×</div>
           <div class="stat-label" data-en="Avg. ROI" data-ar="متوسط العائد">Avg. ROI</div>
         </div>
+      </div>
+    </div>
+
+    <div class="about-stats-mobile" style="display:none;">
+      <div class="stat-box">
+        <div class="stat-number">80+</div>
+        <div class="stat-label" data-en="Clients" data-ar="عميل">Clients</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">5+</div>
+        <div class="stat-label" data-en="Years" data-ar="سنوات">Years</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">2</div>
+        <div class="stat-label" data-en="Markets" data-ar="سوقان">Markets</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">3×</div>
+        <div class="stat-label" data-en="Avg. ROI" data-ar="متوسط العائد">Avg. ROI</div>
       </div>
     </div>
 
