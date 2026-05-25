@@ -303,7 +303,7 @@ html[lang="ar"] .service-card { text-align: right; }
 .service-card:hover { transform: translateY(-4px); border-color: rgba(201,168,76,0.25); box-shadow: 0 30px 80px rgba(0,0,0,0.4); }
 
 .service-number { font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.2em; color: var(--gold-dim); margin-bottom: 24px; font-weight: 600; }
-.service-icon { font-size: 32px; margin-bottom: 24px; display: block; }
+.service-icon { width: 48px; height: 48px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(201,168,76,0.2); }
 .service-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; }
 html[lang="ar"] .service-name { font-family: 'Cairo', sans-serif; }
 .service-desc { font-size: 14px; color: var(--muted); line-height: 1.75; font-weight: 300; }
@@ -353,6 +353,20 @@ html[lang="ar"] .about-markets { flex-direction: row-reverse; }
 }
 html[lang="ar"] .market-pill { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
 
+/* ---- ABOUT VALUES ---- */
+.about-values { display: flex; flex-direction: column; gap: 24px; margin: 36px 0; }
+.about-value-item { display: flex; align-items: flex-start; gap: 18px; }
+html[lang="ar"] .about-value-item { flex-direction: row-reverse; }
+.about-value-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border: 1px solid rgba(201,168,76,0.25);
+  display: flex; align-items: center; justify-content: center;
+}
+.about-value-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+html[lang="ar"] .about-value-title { font-family: 'Cairo', sans-serif; }
+.about-value-desc { font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+html[lang="ar"] .about-value-desc { font-family: 'Cairo', sans-serif; line-height: 1.9; }
+
 /* ---- WORK ---- */
 #work { background: var(--surface); }
 .work-grid { display: grid; grid-template-columns: repeat(12,1fr); gap: 16px; }
@@ -365,14 +379,18 @@ html[lang="ar"] .market-pill { font-family: 'Cairo', sans-serif; letter-spacing:
 
 .work-thumb { width: 100%; padding-bottom: 66%; position: relative; overflow: hidden; }
 .work-card:nth-child(1) .work-thumb { padding-bottom: 55%; }
-.work-bg { position: absolute; inset: 0; transition: transform .5s ease; }
+.work-bg { position: absolute; inset: 0; transition: transform .5s ease; overflow: hidden; }
 .work-card:hover .work-bg { transform: scale(1.05); }
-.work-bg-1 { background: linear-gradient(135deg,#1a1040,#0d2040,#0a1020); }
-.work-bg-2 { background: linear-gradient(135deg,#1a0d0d,#2d1a10); }
-.work-bg-3 { background: linear-gradient(135deg,#0d1a1a,#102d20); }
-.work-bg-4 { background: linear-gradient(135deg,#1a1a0d,#2d2a10); }
-.work-bg-5 { background: linear-gradient(135deg,#1a0d1a,#2d102d); }
-.work-pattern { position: absolute; inset: 0; opacity: 0.4; }
+.work-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.work-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(5,7,10,0.85) 0%, rgba(5,7,10,0.2) 60%, transparent 100%);
+}
+.work-bg-1 { background: #0d0d0d; }
+.work-bg-2 { background: #0d0d0d; }
+.work-bg-3 { background: #0d0d0d; }
+.work-bg-4 { background: #0d0d0d; }
+.work-bg-5 { background: #0d0d0d; }
 .work-label { padding: 20px 24px; }
 html[lang="ar"] .work-label { text-align: right; }
 .work-category { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; font-weight: 600; }
@@ -616,14 +634,14 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
 
   <div class="hero-badges">
     <div class="badge">
-      <div class="badge-icon">🇪🇬</div>
+      <div class="badge-icon">EG</div>
       <div class="badge-text">
         <strong data-en="Egypt" data-ar="مصر">Egypt</strong>
         <span data-en="Cairo HQ" data-ar="المقر الرئيسي — القاهرة">Cairo HQ</span>
       </div>
     </div>
     <div class="badge">
-      <div class="badge-icon">🇸🇦</div>
+      <div class="badge-icon">SA</div>
       <div class="badge-text">
         <strong data-en="Saudi Arabia" data-ar="المملكة العربية السعودية">Saudi Arabia</strong>
         <span data-en="Riyadh Office" data-ar="مكتب الرياض">Riyadh Office</span>
@@ -664,42 +682,42 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
   <div class="services-grid">
     <div class="service-card reveal">
       <div class="service-number">01</div>
-      <span class="service-icon">📡</span>
+      <span class="service-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <div class="service-name" data-en="Performance Marketing" data-ar="التسويق الأدائي">Performance Marketing</div>
       <p class="service-desc" data-en="Data-driven paid campaigns on Meta, Google, TikTok, and Snapchat. Every dirham and pound optimized for measurable ROI." data-ar="حملات مدفوعة تعتمد على البيانات عبر Meta وGoogle وTikTok وSnapchat. كل جنيه وريال مُحسَّن لتحقيق عائد استثمار قابل للقياس.">Data-driven paid campaigns on Meta, Google, TikTok, and Snapchat. Every dirham and pound optimized for measurable ROI.</p>
       <div class="service-arrow">↗</div>
     </div>
     <div class="service-card reveal">
       <div class="service-number">02</div>
-      <span class="service-icon">✦</span>
+      <span class="service-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="#c9a84c" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
       <div class="service-name" data-en="Brand Strategy & Identity" data-ar="استراتيجية الهوية البصرية">Brand Strategy & Identity</div>
       <p class="service-desc" data-en="From positioning and naming to visual systems that make your brand unmistakable in the MENA market." data-ar="من التموضع والتسمية إلى الأنظمة البصرية التي تجعل علامتك لا تُنسى في سوق منطقة الشرق الأوسط وشمال أفريقيا.">From positioning and naming to visual systems that make your brand unmistakable in the MENA market.</p>
       <div class="service-arrow">↗</div>
     </div>
     <div class="service-card reveal">
       <div class="service-number">03</div>
-      <span class="service-icon">📲</span>
+      <span class="service-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#c9a84c" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
       <div class="service-name" data-en="Social Media Management" data-ar="إدارة وسائل التواصل">Social Media Management</div>
       <p class="service-desc" data-en="Full community management, content creation, and growth strategy tailored for Arabic-speaking audiences." data-ar="إدارة مجتمعية كاملة وإنشاء المحتوى واستراتيجية النمو مُصمَّمة خصيصاً للجمهور الناطق بالعربية.">Full community management, content creation, and growth strategy tailored for Arabic-speaking audiences.</p>
       <div class="service-arrow">↗</div>
     </div>
     <div class="service-card reveal">
       <div class="service-number">04</div>
-      <span class="service-icon">🔍</span>
+      <span class="service-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#c9a84c" stroke-width="1.5"/><path d="M21 21l-4.35-4.35" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <div class="service-name" data-en="SEO & Content Marketing" data-ar="تحسين محركات البحث والمحتوى">SEO & Content Marketing</div>
       <p class="service-desc" data-en="Bilingual SEO strategy and content that ranks. Drive organic traffic in both the Egyptian and Saudi markets." data-ar="استراتيجية SEO ثنائية اللغة ومحتوى يتصدر النتائج. اجذب الزيارات العضوية في كل من السوقين المصري والسعودي.">Bilingual SEO strategy and content that ranks. Drive organic traffic in both the Egyptian and Saudi markets.</p>
       <div class="service-arrow">↗</div>
     </div>
     <div class="service-card reveal">
       <div class="service-number">05</div>
-      <span class="service-icon">⚡</span>
+      <span class="service-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8 6 2 12 8 18" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <div class="service-name" data-en="Web & App Development" data-ar="تطوير المواقع والتطبيقات">Web & App Development</div>
       <p class="service-desc" data-en="Fast, conversion-focused websites and apps. From landing pages to full e-commerce platforms — built to perform." data-ar="مواقع وتطبيقات سريعة تركّز على التحويل. من الصفحات المقصودة إلى منصات التجارة الإلكترونية الكاملة — مبنية لتحقيق الأداء.">Fast, conversion-focused websites and apps. From landing pages to full e-commerce platforms — built to perform.</p>
       <div class="service-arrow">↗</div>
     </div>
     <div class="service-card reveal">
       <div class="service-number">06</div>
-      <span class="service-icon">📊</span>
+      <span class="service-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><line x1="18" y1="20" x2="18" y2="10" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <div class="service-name" data-en="Analytics & Reporting" data-ar="التحليلات والتقارير">Analytics & Reporting</div>
       <p class="service-desc" data-en="Custom dashboards and deep-dive reporting. Turn your data into a strategic advantage, not a spreadsheet." data-ar="لوحات بيانات مخصصة وتقارير معمّقة. حوّل بياناتك إلى ميزة استراتيجية، لا مجرد جداول.">Custom dashboards and deep-dive reporting. Turn your data into a strategic advantage, not a spreadsheet.</p>
       <div class="service-arrow">↗</div>
@@ -743,14 +761,41 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
          data-ar="نجمع بين التفكير الاستراتيجي والتنفيذ الإبداعي الجريء لمساعدة العلامات التجارية على النمو فيما يهم حقاً: الوصول، والمصداقية، والإيرادات. من الشركات الناشئة إلى المؤسسات الكبرى، نُحضر نفس الشغف بالنتائج.">
         We combine strategic thinking with bold creative execution to help brands grow where it counts: reach, relevance, and revenue.
       </p>
-      <p data-en="Our name reflects our philosophy — every touchpoint in a customer's journey forms a ring, a loop that connects brands with people in meaningful ways."
-         data-ar="اسمنا يعكس فلسفتنا — كل نقطة تواصل في رحلة العميل تشكّل حلقة، تربط العلامات التجارية بالناس بطرق ذات معنى حقيقي.">
-        Our name reflects our philosophy — every touchpoint in a customer's journey forms a ring, a loop that connects brands with people in meaningful ways.
-      </p>
+
+      <div class="about-values">
+        <div class="about-value-item">
+          <div class="about-value-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="#c9a84c" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="about-value-title" data-en="Results-Obsessed" data-ar="مهووسون بالنتائج">Results-Obsessed</div>
+            <div class="about-value-desc" data-en="Every decision is driven by data and measured against real business outcomes." data-ar="كل قرار مبني على البيانات ومقاس بنتائج تجارية حقيقية.">Every decision is driven by data and measured against real business outcomes.</div>
+          </div>
+        </div>
+        <div class="about-value-item">
+          <div class="about-value-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#c9a84c" stroke-width="1.5"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" stroke="#c9a84c" stroke-width="1.5"/></svg>
+          </div>
+          <div>
+            <div class="about-value-title" data-en="Rooted in the Region" data-ar="متجذرون في المنطقة">Rooted in the Region</div>
+            <div class="about-value-desc" data-en="Native fluency in Arabic culture, consumer behavior, and local market dynamics." data-ar="إتقان حقيقي للثقافة العربية وسلوك المستهلك وديناميكيات السوق المحلي.">Native fluency in Arabic culture, consumer behavior, and local market dynamics.</div>
+          </div>
+        </div>
+        <div class="about-value-item">
+          <div class="about-value-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="#c9a84c" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="about-value-title" data-en="Full-Service Speed" data-ar="سرعة خدمة متكاملة">Full-Service Speed</div>
+            <div class="about-value-desc" data-en="Strategy, creative, media, and tech — all under one roof, moving fast." data-ar="الاستراتيجية والإبداع والإعلام والتقنية — كل شيء تحت سقف واحد، يتحرك بسرعة.">Strategy, creative, media, and tech — all under one roof, moving fast.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="about-markets">
-        <div class="market-pill">🇪🇬 <span data-en="Egypt" data-ar="مصر">Egypt</span></div>
-        <div class="market-pill">🇸🇦 <span data-en="Saudi Arabia" data-ar="السعودية">Saudi Arabia</span></div>
-        <div class="market-pill">🌐 <span data-en="MENA Region" data-ar="منطقة الشرق الأوسط">MENA Region</span></div>
+        <div class="market-pill"><span data-en="Egypt" data-ar="مصر">Egypt</span></div>
+        <div class="market-pill"><span data-en="Saudi Arabia" data-ar="السعودية">Saudi Arabia</span></div>
+        <div class="market-pill"><span data-en="MENA Region" data-ar="منطقة الشرق الأوسط">MENA Region</span></div>
       </div>
     </div>
   </div>
@@ -767,12 +812,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
     <div class="work-card reveal">
       <div class="work-thumb">
         <div class="work-bg work-bg-1">
-          <svg class="work-pattern" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
-            <circle cx="200" cy="150" r="120" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.3"/>
-            <circle cx="200" cy="150" r="80" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.2"/>
-            <circle cx="200" cy="150" r="40" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.15"/>
-            <text x="200" y="158" text-anchor="middle" font-size="34" font-family="Syne" fill="#c9a84c" opacity="0.4">3×</text>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80&auto=format&fit=crop" alt="Fashion Retailer" class="work-img"/>
+          <div class="work-img-overlay"></div>
         </div>
       </div>
       <div class="work-label">
@@ -783,11 +824,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
     <div class="work-card reveal">
       <div class="work-thumb">
         <div class="work-bg work-bg-2">
-          <svg class="work-pattern" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice">
-            <rect x="30" y="30" width="240" height="140" rx="4" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.3"/>
-            <circle cx="90" cy="110" r="25" fill="#c9a84c" opacity="0.15"/>
-            <circle cx="180" cy="90" r="35" fill="#c9a84c" opacity="0.2"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80&auto=format&fit=crop" alt="F&B Chain" class="work-img"/>
+          <div class="work-img-overlay"></div>
         </div>
       </div>
       <div class="work-label">
@@ -798,10 +836,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
     <div class="work-card reveal">
       <div class="work-thumb">
         <div class="work-bg work-bg-3">
-          <svg class="work-pattern" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice">
-            <polygon points="150,20 280,180 20,180" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.25"/>
-            <circle cx="150" cy="130" r="20" fill="#c9a84c" opacity="0.2"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80&auto=format&fit=crop" alt="Real Estate" class="work-img"/>
+          <div class="work-img-overlay"></div>
         </div>
       </div>
       <div class="work-label">
@@ -812,10 +848,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
     <div class="work-card reveal">
       <div class="work-thumb">
         <div class="work-bg work-bg-4">
-          <svg class="work-pattern" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice">
-            <rect x="20" y="20" width="80" height="80" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.3" transform="rotate(15 60 60)"/>
-            <rect x="150" y="40" width="120" height="80" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.25" rx="2"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80&auto=format&fit=crop" alt="Fintech" class="work-img"/>
+          <div class="work-img-overlay"></div>
         </div>
       </div>
       <div class="work-label">
@@ -826,10 +860,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
     <div class="work-card reveal">
       <div class="work-thumb">
         <div class="work-bg work-bg-5">
-          <svg class="work-pattern" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice">
-            <circle cx="80" cy="80" r="60" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.25"/>
-            <circle cx="200" cy="120" r="70" stroke="#c9a84c" stroke-width="0.5" fill="none" opacity="0.2"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80&auto=format&fit=crop" alt="Healthcare" class="work-img"/>
+          <div class="work-img-overlay"></div>
         </div>
       </div>
       <div class="work-label">
@@ -887,15 +919,15 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
       </p>
       <div class="contact-details">
         <div class="contact-item">
-          <div class="contact-item-icon">📍</div>
+          <div class="contact-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="#c9a84c" stroke-width="1.5"/><circle cx="12" cy="10" r="3" stroke="#c9a84c" stroke-width="1.5"/></svg></div>
           <span data-en="Cairo, Egypt — Riyadh, Saudi Arabia" data-ar="القاهرة، مصر — الرياض، المملكة العربية السعودية">Cairo, Egypt — Riyadh, Saudi Arabia</span>
         </div>
         <div class="contact-item">
-          <div class="contact-item-icon">✉️</div>
+          <div class="contact-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#c9a84c" stroke-width="1.5"/><polyline points="22,6 12,13 2,6" stroke="#c9a84c" stroke-width="1.5"/></svg></div>
           hello@ringdigital.co
         </div>
         <div class="contact-item">
-          <div class="contact-item-icon">📞</div>
+          <div class="contact-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.1 2.18 2 2 0 012.08 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91A16 16 0 0016.09 17.09l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" stroke="#c9a84c" stroke-width="1.5"/></svg></div>
           +20 100 000 0000 · +966 50 000 0000
         </div>
       </div>
@@ -920,8 +952,8 @@ html[lang="ar"] .footer-copy { font-family: 'Cairo', sans-serif; }
         <label data-en="Market" data-ar="السوق المستهدف">Market</label>
         <select>
           <option value="" data-en="Select your market" data-ar="اختر السوق">Select your market</option>
-          <option data-en="Egypt 🇪🇬" data-ar="مصر 🇪🇬">Egypt 🇪🇬</option>
-          <option data-en="Saudi Arabia 🇸🇦" data-ar="السعودية 🇸🇦">Saudi Arabia 🇸🇦</option>
+          <option data-en="Egypt" data-ar="مصر">Egypt</option>
+          <option data-en="Saudi Arabia" data-ar="السعودية">Saudi Arabia</option>
           <option data-en="Both / MENA" data-ar="كلاهما / منطقة الشرق الأوسط">Both / MENA</option>
         </select>
       </div>
